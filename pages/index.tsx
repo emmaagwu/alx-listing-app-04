@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import Image from 'next/image';
 import { Star, Bed, Bath, Users } from 'lucide-react';
 import HeroFilterDemo from '@/components/layout/Hero'
@@ -149,165 +150,215 @@ const ListingSection: React.FC<ListingSectionProps> = ({
 };
 
 // Example usage with sample data
-const sampleProperties: Property[] = [
-  {
-    name: "Entire cabin",
-    address: {
-      state: "Nova Friburgo",
-      city: "Nova Friburgo",
-      country: "Brazil"
-    },
-    rating: 4.76,
-    category: ["Top Villa", "Self Checkin", "Free Reschedule"],
-    price: 62,
-    offers: {
-      bed: "1",
-      shower: "1",
-      occupants: "3"
-    },
-    image: "/property1.png",
-    discount: ""
-  },
-  {
-    name: "Downtown Apartment",
-    address: {
-      state: "Tokyo",
-      city: "Tokyo",
-      country: "Japan"
-    },
-    rating: 4.81,
-    category: ["City Center", "Free WiFi", "Public Transport"],
-    price: 2200,
-    offers: {
-      bed: "1",
-      shower: "1",
-      occupants: "2"
-    },
-    image: "/pro2.png",
-    discount: ""
-  },
-  {
-    name: "Luxury Beach Villa",
-    address: {
-      state: "Bali",
-      city: "Ubud",
-      country: "Indonesia"
-    },
-    rating: 4.92,
-    category: ["Beachfront", "Pool", "Luxury"],
-    price: 150,
-    offers: {
-      bed: "3",
-      shower: "2",
-      occupants: "6"
-    },
-    image: "/pro3.png",
-    discount: ""
-  },
-  {
-    name: "Cozy Mountain Retreat",
-    address: {
-      state: "Colorado",
-      city: "Aspen",
-      country: "USA"
-    },
-    rating: 4.65,
-    category: ["Mountain View", "Fireplace", "Ski Access"],
-    price: 180,
-    offers: {
-      bed: "2",
-      shower: "1",
-      occupants: "4"
-    },
-    image: "/pro4.png",
-    discount: ""
-  },
-  {
-    name: "Modern Loft",
-    address: {
-      state: "New York",
-      city: "Manhattan",
-      country: "USA"
-    },
-    rating: 4.73,
-    category: ["City Center", "Modern", "High-Speed WiFi"],
-    price: 320,
-    offers: {
-      bed: "1",
-      shower: "1",
-      occupants: "2"
-    },
-    image: "/pro5.png",
-    discount: ""
-  },
-  {
-    name: "Seaside Cottage",
-    address: {
-      state: "Cornwall",
-      city: "St. Ives",
-      country: "UK"
-    },
-    rating: 4.88,
-    category: ["Ocean View", "Pet Friendly", "Garden"],
-    price: 95,
-    offers: {
-      bed: "2",
-      shower: "1",
-      occupants: "4"
-    },
-    image: "/pro6.png",
-    discount: ""
-  },
-  {
-    name: "Desert Oasis",
-    address: {
-      state: "Arizona",
-      city: "Scottsdale",
-      country: "USA"
-    },
-    rating: 4.70,
-    category: ["Pool", "Desert View", "Hot Tub"],
-    price: 110,
-    offers: {
-      bed: "2",
-      shower: "2",
-      occupants: "4"
-    },
-    image: "/pro7.png",
-    discount: ""
-  },
-  {
-    name: "Historic Townhouse",
-    address: {
-      state: "Tuscany",
-      city: "Florence",
-      country: "Italy"
-    },
-    rating: 4.84,
-    category: ["Historic", "City Center", "Rooftop Terrace"],
-    price: 140,
-    offers: {
-      bed: "3",
-      shower: "2",
-      occupants: "6"
-    },
-    image: "/pro8.png",
-    discount: ""
-  }
-];
+// const sampleProperties: Property[] = [
+//   {
+//     name: "Entire cabin",
+//     address: {
+//       state: "Nova Friburgo",
+//       city: "Nova Friburgo",
+//       country: "Brazil"
+//     },
+//     rating: 4.76,
+//     category: ["Top Villa", "Self Checkin", "Free Reschedule"],
+//     price: 62,
+//     offers: {
+//       bed: "1",
+//       shower: "1",
+//       occupants: "3"
+//     },
+//     image: "/property1.png",
+//     discount: ""
+//   },
+//   {
+//     name: "Downtown Apartment",
+//     address: {
+//       state: "Tokyo",
+//       city: "Tokyo",
+//       country: "Japan"
+//     },
+//     rating: 4.81,
+//     category: ["City Center", "Free WiFi", "Public Transport"],
+//     price: 2200,
+//     offers: {
+//       bed: "1",
+//       shower: "1",
+//       occupants: "2"
+//     },
+//     image: "/pro2.png",
+//     discount: ""
+//   },
+//   {
+//     name: "Luxury Beach Villa",
+//     address: {
+//       state: "Bali",
+//       city: "Ubud",
+//       country: "Indonesia"
+//     },
+//     rating: 4.92,
+//     category: ["Beachfront", "Pool", "Luxury"],
+//     price: 150,
+//     offers: {
+//       bed: "3",
+//       shower: "2",
+//       occupants: "6"
+//     },
+//     image: "/pro3.png",
+//     discount: ""
+//   },
+//   {
+//     name: "Cozy Mountain Retreat",
+//     address: {
+//       state: "Colorado",
+//       city: "Aspen",
+//       country: "USA"
+//     },
+//     rating: 4.65,
+//     category: ["Mountain View", "Fireplace", "Ski Access"],
+//     price: 180,
+//     offers: {
+//       bed: "2",
+//       shower: "1",
+//       occupants: "4"
+//     },
+//     image: "/pro4.png",
+//     discount: ""
+//   },
+//   {
+//     name: "Modern Loft",
+//     address: {
+//       state: "New York",
+//       city: "Manhattan",
+//       country: "USA"
+//     },
+//     rating: 4.73,
+//     category: ["City Center", "Modern", "High-Speed WiFi"],
+//     price: 320,
+//     offers: {
+//       bed: "1",
+//       shower: "1",
+//       occupants: "2"
+//     },
+//     image: "/pro5.png",
+//     discount: ""
+//   },
+//   {
+//     name: "Seaside Cottage",
+//     address: {
+//       state: "Cornwall",
+//       city: "St. Ives",
+//       country: "UK"
+//     },
+//     rating: 4.88,
+//     category: ["Ocean View", "Pet Friendly", "Garden"],
+//     price: 95,
+//     offers: {
+//       bed: "2",
+//       shower: "1",
+//       occupants: "4"
+//     },
+//     image: "/pro6.png",
+//     discount: ""
+//   },
+//   {
+//     name: "Desert Oasis",
+//     address: {
+//       state: "Arizona",
+//       city: "Scottsdale",
+//       country: "USA"
+//     },
+//     rating: 4.70,
+//     category: ["Pool", "Desert View", "Hot Tub"],
+//     price: 110,
+//     offers: {
+//       bed: "2",
+//       shower: "2",
+//       occupants: "4"
+//     },
+//     image: "/pro7.png",
+//     discount: ""
+//   },
+//   {
+//     name: "Historic Townhouse",
+//     address: {
+//       state: "Tuscany",
+//       city: "Florence",
+//       country: "Italy"
+//     },
+//     rating: 4.84,
+//     category: ["Historic", "City Center", "Rooftop Terrace"],
+//     price: 140,
+//     offers: {
+//       bed: "3",
+//       shower: "2",
+//       occupants: "6"
+//     },
+//     image: "/pro8.png",
+//     discount: ""
+//   }
+// ];
 
 // Main Component for Demo
-const PropertyListingDemo: React.FC = () => {
+// const PropertyListingDemo: React.FC = () => {
+//   return (
+//     <div>
+//       <ListingSection 
+//         properties={sampleProperties} 
+//         title="Discover Amazing Places to Stay"
+//       />
+//     </div>
+//   );
+// };
+
+const PropertyListingPage: React.FC = () => {
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        // 🔹 Replace with your actual backend API URL if needed
+        const response = await axios.get('/api/properties');
+        setProperties(response.data);
+      } catch (err) {
+        console.error('Error fetching properties:', err);
+        setError('Failed to load properties. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProperties();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-gray-600 text-lg">Loading properties...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-red-500 text-lg">{error}</p>
+      </div>
+    );
+  }
+
   return (
     <div>
-      <ListingSection 
-        properties={sampleProperties} 
+      <ListingSection
+        properties={properties}
         title="Discover Amazing Places to Stay"
       />
     </div>
   );
 };
 
-export default PropertyListingDemo;
+export default PropertyListingPage;
+
+// export default PropertyListingDemo;
 export { PropertyCard, ListingSection };
 export type { Property, PropertyCardProps, ListingSectionProps };
