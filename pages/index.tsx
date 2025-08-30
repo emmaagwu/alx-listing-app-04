@@ -301,7 +301,7 @@ const ListingSection: React.FC<ListingSectionProps> = ({
 // const PropertyListingDemo: React.FC = () => {
 //   return (
 //     <div>
-//       <ListingSection 
+//       <ListingSection
 //         properties={sampleProperties} 
 //         title="Discover Amazing Places to Stay"
 //       />
